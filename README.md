@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio — Rimjhim Jain
 
-## Getting Started
+A single-page portfolio built around one idea: a lit **signal thread** runs the
+full length of the page, drawn by scroll, and every section hangs off it.
 
-First, run the development server:
+Live sections, in order: hero, the thesis line, a pinned work reel that pans
+sideways through five projects, the toolkit, the record before the job, and the
+signoff.
+
+## Stack
+
+- **Next.js 16** (App Router, Turbopack) + React 19 + TypeScript
+- **Tailwind CSS v4** for tokens; the bespoke visual treatments live in
+  `src/app/globals.css`
+- **Motion** for scroll-linked transforms and counters
+- **Lenis** for eased scrolling
+- **Archivo** (variable, 62–125% width axis) and **Newsreader**, self-hosted via
+  `next/font`
+
+## Commands
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev     # dev server
+npm run build   # production build
+npm start       # serve the build
+npm run lint    # eslint
+npx tsc --noEmit  # type check
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+There is no test suite. The verification bar is `npm run lint`, `npx tsc
+--noEmit` and `npm run build`, plus a look at the running page.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Editing content
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**All copy and data lives in `src/content/profile.ts`.** The components are
+layout only — to change a project, a skill cluster or a figure, edit that file
+and nothing else.
 
-## Learn More
+### Adding the portrait
 
-To learn more about Next.js, take a look at the following resources:
+1. Drop the image at `public/portrait.jpg`.
+2. Set `portraitSrc = "/portrait.jpg"` in `src/content/profile.ts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Until then the portrait frame renders a generative spectrogram fill so the
+hero composition still holds.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Design system
 
-## Deploy on Vercel
+The palette is a voice spectrogram, which is the subject matter: a deep
+aubergine ground with a violet → magenta → amber → pale ramp as the single
+accent. Tokens are defined once in the `@theme` block of
+`src/app/globals.css`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The page commits to one dark world, so there is no light theme to mirror.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Animation
+
+Every effect is scroll-driven or ambient; nothing hides content behind an
+observer, so the page reads fully at rest. Canvas work pauses when offscreen.
+
+`prefers-reduced-motion` is respected throughout: Lenis is skipped, the work
+reel stacks vertically, canvas fields hold a still frame, SMIL animations are
+not mounted, and counters render their final values.
+
+## Layout notes
+
+Two things that are easy to break again:
+
+- The work reel decides horizontal vs stacked from the **viewport width alone**.
+  It cannot key off the measured track width, because the track is only wide
+  enough to pan once the horizontal layout is already applied.
+- `body` uses `overflow-x: clip`, not `hidden`. `hidden` makes the body a scroll
+  container and silently breaks the reel's sticky positioning.
+
+## Deploying
+
+Vercel, no configuration needed:
+
+```bash
+npx vercel
+```
