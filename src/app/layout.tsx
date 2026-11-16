@@ -22,11 +22,11 @@ const newsreader = Newsreader({
 const name = `${profile.firstName} ${profile.lastName}`;
 
 export const metadata: Metadata = {
-  title: name,
+  title: `${name} | Software & AI Engineer`,
   description: profile.summary,
   authors: [{ name, url: links.github }],
   openGraph: {
-    title: name,
+    title: `${name} | Software & AI Engineer`,
     description: `${profile.role}. ${profile.claim.lead} ${profile.claim.turn}`,
     type: "profile",
   },

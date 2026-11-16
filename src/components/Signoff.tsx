@@ -165,7 +165,7 @@ export function Signoff() {
         >
           R<span>•</span>J
         </a>
-        <span className="mono">Rimjhim Jain / Software engineer</span>
+        <span className="mono">Rimjhim Jain / Software & AI engineer</span>
         <a href={`mailto:${links.email}`}>{links.email}</a>
         <a href="#subject">Back to top ↑</a>
       </div>

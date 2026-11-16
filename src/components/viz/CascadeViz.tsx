@@ -45,9 +45,8 @@ export function CascadeViz() {
     let visible = false;
 
     const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.max(1, Math.round(rect.width * dpr));
-      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr));
+      canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr));
     };
 
     const pickGate = () => {
@@ -153,7 +152,8 @@ export function CascadeViz() {
       resize();
       draw(16);
     };
-    window.addEventListener("resize", onResize, { passive: true });
+    const resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(canvas);
 
     if (!reduced) {
       observer.observe(canvas);
@@ -162,7 +162,7 @@ export function CascadeViz() {
     return () => {
       cancelAnimationFrame(raf);
       observer.disconnect();
-      window.removeEventListener("resize", onResize);
+      resizeObserver.disconnect();
     };
   }, [reduced]);
 

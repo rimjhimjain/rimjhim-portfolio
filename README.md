@@ -27,7 +27,7 @@ No required contact configuration remains. Email, telephone, LinkedIn and GitHub
 
 ## Motion and interactions
 
-GSAP with `@gsap/react` and ScrollTrigger handles the opening sequence, portrait parallax, case-study masks, chapter entrances, and the SVG hand/string sequence. Scoped contexts and media queries revert animations on unmount and when reduced motion changes.
+GSAP with `@gsap/react` and ScrollTrigger handles the opening sequence, portrait parallax, workbench entrances and chapter reveals. Scoped contexts and media queries revert animations on unmount and when reduced motion changes.
 
 The existing `motion/react` package, the current Framer Motion distribution, handles navigation feedback, button hover/tap and tilt, and the contact panel. GSAP owns entrance wrappers; Motion owns their interactive children. Native page scrolling keeps anchor navigation and modal scroll locking predictable.
 
@@ -37,6 +37,6 @@ The contact overlay uses a native modal dialog with explicit focus cycling, Esca
 
 ## Design
 
-Tokens and responsive rules are in `src/app/globals.css`. Near-black and ivory form the base; yellow, red, and blue mark annotations and diagram stages. Archivo display, Newsreader prose, and system mono annotations. The portrait-led opening and five navigable chapters frame seven case studies, including SMS automation and runtime Stripe configuration. The open diagram compositions use restrained perspective on hover, and a dependency-free WebGL sculpture closes the page. Motion respects reduced-motion preferences. The portrait remains the actual supplied photograph, without generated identity changes.
+Tokens and responsive rules are in `src/app/globals.css`. Near-black and ivory form the base; yellow, red, and blue mark annotations and diagram stages. Archivo display, Newsreader prose, and system mono annotations. The portrait-led opening and five navigable chapters frame seven case studies, including SMS automation and runtime Stripe configuration. The workbench presents seven illustrated projects in an asymmetric layout, with native dialogs for detailed engineering notes. Dedicated styles live in `src/app/workbench.css`. Project covers use perspective, message, orbit, and chart interactions on hover, and a dependency-free WebGL sculpture closes the page. Motion respects reduced-motion preferences. The portrait remains the actual supplied photograph, without generated identity changes.
 
 See `docs/implementation-plan.md` for the original audit and plan, and `docs/validation.md` for validation results.

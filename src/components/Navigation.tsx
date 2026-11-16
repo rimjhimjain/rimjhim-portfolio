@@ -6,7 +6,7 @@ import { LightSwitch } from "./Flashlight";
 
 const chapters = [
   { id: "subject", title: "Subject" },
-  { id: "work", title: "Case files" },
+  { id: "work", title: "Workbench" },
   { id: "toolkit", title: "Toolkit" },
   { id: "record", title: "Record" },
   { id: "contact", title: "Collaborate" },

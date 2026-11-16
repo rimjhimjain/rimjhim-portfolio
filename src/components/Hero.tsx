@@ -19,22 +19,18 @@ export function Hero() {
       media.add("(prefers-reduced-motion: no-preference)", () => {
         gsap
           .timeline({ defaults: { ease: "power3.out" } })
-          .from(".hero-kicker", { y: 12, opacity: 0, duration: 0.5 })
-          .from(
-            ".hero-name span",
-            { yPercent: 105, stagger: 0.13, duration: 1 },
-            "-=0.2",
-          )
+          .from(".hero-name span", {
+            yPercent: 12,
+            opacity: 0.5,
+            stagger: 0.08,
+            duration: 0.7,
+          })
           .from(
             ".portrait-stage",
-            { clipPath: "inset(100% 0 0 0)", duration: 1.2 },
-            "<0.1",
+            { scale: 1.025, opacity: 0.6, duration: 0.7 },
+            "<",
           )
-          .from(
-            ".hero-detail",
-            { y: 18, opacity: 0, stagger: 0.12, duration: 0.65 },
-            "-=0.6",
-          );
+          .from(".hero-detail", { y: 8, opacity: 0.6, duration: 0.5 }, "<");
         gsap.to(".portrait-image", {
           yPercent: 6,
           ease: "none",
@@ -54,8 +50,8 @@ export function Hero() {
   return (
     <section ref={root} id="subject" className="hero-section">
       <div className="hero-kicker mono">
-        <span>A portfolio in five chapters</span>
-        <span>Software, with a human point of view.</span>
+        <span>Software engineer & AI engineer</span>
+        <span>A curious mind. A hands-on builder.</span>
       </div>
       <div className="hero-composition">
         <h1 className="hero-name">
@@ -87,25 +83,40 @@ export function Hero() {
           radius={160}
           darkness={0.96}
         >
-          AI & backend. Human first.
+          Curious by default.
         </Flashlight>
         <div className="hero-description hero-detail">
-          <span className="chapter-label mono">01 / The subject</span>
+          <span className="chapter-label mono">
+            Software engineer & AI engineer
+          </span>
           <p>
-            Good AI needs
+            I turn AI into
             <br />
-            good systems.
+            working products.
           </p>
           <div className="hero-role">
-            I build the backend, workflows, and product infrastructure that
-            <br className="desktop-break" /> make AI useful beyond the demo.
+            From model decisions to the screen you use. I build the software,
+            <br className="desktop-break" /> evaluation loops, and workflows
+            that make AI useful.
+          </div>
+          <div className="hero-actions">
+            <a href="#work">
+              See what I build <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              href="/Rimjhim_Jain_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Read my resume ↗
+            </a>
           </div>
         </div>
         <div className="hero-note hero-detail">
           <span className="status-dot" />
           Currently at Inspra.ai
           <br />
-          <span className="mono">Engineer / Builder / Problem solver</span>
+          <span className="mono">Software + AI / End to end</span>
         </div>
         <svg
           className="hero-arrow hero-detail"
@@ -125,7 +136,7 @@ export function Hero() {
           AI systems / Backend / Product infrastructure
         </span>
         <motion.a href="#work" whileHover={{ y: 3 }}>
-          Explore the work <span aria-hidden="true">↓</span>
+          Visit the workbench <span aria-hidden="true">↓</span>
         </motion.a>
         <span className="torch-hint mono">
           Try the light switch. Look a little closer.

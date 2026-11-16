@@ -3,12 +3,12 @@
 export const profile = {
   firstName: "Rimjhim",
   lastName: "Jain",
-  role: "Software engineer / Python, backend and AI systems",
+  role: "Software Engineer & AI Engineer",
   summary:
-    "I build the backend, workflows, and product infrastructure that make AI useful in the moments that matter. " +
+    "I’m a software engineer and AI engineer building the backend, evaluation loops, and product workflows that make AI useful. " +
     "At Inspra.ai, my work spans voice systems, SMS automation, billing, and the infrastructure behind reliable outreach.",
   claim: {
-    lead: "Good AI needs good systems.",
+    lead: "I turn AI into working products.",
     turn: "I build the parts that make it work.",
   },
 } as const;
