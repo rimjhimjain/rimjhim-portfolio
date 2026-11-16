@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "motion/react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const LINE =
   "M0 148 L20 140 L40 146 L60 128 L80 134 L100 118 L120 124 L140 104 L160 112 L180 92 L200 100 " +
@@ -12,7 +12,7 @@ const LINE =
 export function TickerViz() {
   const lineRef = useRef<SVGPathElement>(null);
   const dotRef = useRef<SVGCircleElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
     const line = lineRef.current;
@@ -39,9 +39,17 @@ export function TickerViz() {
       dot.setAttribute("cy", `${point.y}`);
       raf = requestAnimationFrame(sweep);
     };
-    raf = requestAnimationFrame(sweep);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !raf) raf = requestAnimationFrame(sweep);
+      else if (!entry.isIntersecting) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    });
+    observer.observe(line);
 
     return () => {
+      observer.disconnect();
       cancelAnimationFrame(raf);
       line.style.strokeDasharray = "";
       line.style.strokeDashoffset = "";
@@ -50,14 +58,25 @@ export function TickerViz() {
 
   return (
     <div className="viz">
-      <svg viewBox="0 0 400 200" role="img" aria-label="A live price line streaming in over a websocket.">
-        <g stroke="#2C2138" strokeWidth="1" opacity="0.55">
+      <svg
+        viewBox="0 0 400 200"
+        role="img"
+        aria-label="A live price line streaming in over a websocket."
+      >
+        <g stroke="#45443D" strokeWidth="1" opacity="0.55">
           <path d="M0 50 H400" />
           <path d="M0 100 H400" />
           <path d="M0 150 H400" />
         </g>
-        <path ref={lineRef} fill="none" stroke="#FF8A3D" strokeWidth="1.75" strokeLinejoin="round" d={LINE} />
-        <circle ref={dotRef} cx="400" cy="44" r="3.4" fill="#FFD9A0" />
+        <path
+          ref={lineRef}
+          fill="none"
+          stroke="#F3D735"
+          strokeWidth="1.75"
+          strokeLinejoin="round"
+          d={LINE}
+        />
+        <circle ref={dotRef} cx="400" cy="44" r="3.4" fill="#EAE8E2" />
       </svg>
     </div>
   );

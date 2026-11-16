@@ -1,105 +1,107 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from "motion/react";
+import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { Viz } from "./viz";
-import { work } from "@/content/profile";
+import { Flashlight } from "./Flashlight";
+import { Chapter } from "./Chapter";
+import { work, type VizKind } from "@/content/profile";
 
-const HORIZONTAL_FROM = 940;
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-/** The work section pins and pans sideways through the panels. Below
- *  `HORIZONTAL_FROM`, or when motion is reduced, the same panels stack
- *  vertically — the content and its order are identical either way. */
+const captions: Record<VizKind, string> = {
+  cascade: "A decision, at the right level of complexity.",
+  loop: "Corrections become knowledge.",
+  pipeline: "One finished call. Independent workers.",
+  platform: "The interface is part of the system.",
+  ticker: "Live data, without the refresh.",
+  sms: "A conversation is a workflow, not a send call.",
+  billing: "Runtime changes, without a redeploy.",
+};
+
 export function WorkReel() {
-  const reelRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
-
-  const [horizontal, setHorizontal] = useState(false);
-  const [measuredSpan, setMeasuredSpan] = useState(0);
-  const [viewportHeight, setViewportHeight] = useState(0);
-  const [index, setIndex] = useState(1);
-
-  // Mode is decided from the viewport alone. It cannot depend on the measured
-  // track width, because the track is only wide enough to scroll once the
-  // horizontal layout is already applied.
-  useEffect(() => {
-    const decide = () => setHorizontal(window.innerWidth >= HORIZONTAL_FROM && !reduced);
-    decide();
-    window.addEventListener("resize", decide, { passive: true });
-    return () => window.removeEventListener("resize", decide);
-  }, [reduced]);
-
-  // Measure only after the horizontal layout has landed in the DOM. The first
-  // measurement waits a frame so the browser has applied that layout.
-  useEffect(() => {
-    if (!horizontal) return;
-    const measure = () => {
-      const track = trackRef.current;
-      if (!track) return;
-      setViewportHeight(window.innerHeight);
-      setMeasuredSpan(Math.max(0, track.scrollWidth - window.innerWidth));
-    };
-    const raf = requestAnimationFrame(measure);
-    window.addEventListener("resize", measure, { passive: true });
-    // Web fonts land after first paint and change the track's width.
-    document.fonts?.ready.then(measure).catch(() => {});
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", measure);
-    };
-  }, [horizontal]);
-
-  const span = horizontal ? measuredSpan : 0;
-  const panning = horizontal && span > 0;
-
-  const { scrollYProgress } = useScroll({ target: reelRef, offset: ["start start", "end end"] });
-  const x = useTransform(scrollYProgress, [0, 1], [0, -span]);
-
-  useMotionValueEvent(scrollYProgress, "change", (value) => {
-    if (!panning) return;
-    const clamped = Math.min(1, Math.max(0, value));
-    setIndex(Math.min(work.length, Math.floor(clamped * work.length) + 1));
-  });
-
+  const root = useRef<HTMLElement>(null);
+  useGSAP(
+    () => {
+      const media = gsap.matchMedia();
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.utils.toArray<HTMLElement>(".case-study").forEach((article) => {
+          gsap.from(article.querySelector(".case-visual"), {
+            clipPath: "inset(0 0 100% 0)",
+            duration: 1,
+            ease: "power3.inOut",
+            scrollTrigger: { trigger: article, start: "top 85%", once: true },
+          });
+          gsap.from(article.querySelector(".case-copy"), {
+            y: 35,
+            opacity: 0,
+            duration: 0.8,
+            scrollTrigger: { trigger: article, start: "top 80%", once: true },
+          });
+        });
+      });
+      return () => media.revert();
+    },
+    { scope: root },
+  );
   return (
-    <section>
-      <div className="wrap">
-        <div className="reel-head">
-          <h2>What I&rsquo;ve built</h2>
-          <p>Four systems at Inspra.ai that run against live call traffic, and the one that taught me to ship.</p>
-        </div>
+    <section ref={root} id="work" className="work-section wrap section-space">
+      <Chapter number="02" label="Case files" title="Built for real work." />
+      <div className="work-intro">
+        <p>
+          The details are the work.
+          <br />
+          <em>Here’s what I built, and why it matters.</em>
+        </p>
+        <span className="mono">
+          Selected engineering work
+          <br />
+          2025 — 2026
+        </span>
       </div>
-
-      <div
-        ref={reelRef}
-        className="reel"
-        data-horizontal={horizontal}
-        style={panning ? { height: viewportHeight + span } : undefined}
-      >
-        <div className="reel-sticky">
-          <motion.div ref={trackRef} className="reel-track" style={panning ? { x } : undefined}>
-            {work.map((panel) => (
-              <article key={panel.id} className="panel">
-                <Viz kind={panel.viz} />
-                <p className="panel-meta">{panel.meta}</p>
-                <h3>{panel.title}</h3>
-                <p className="panel-body">{panel.body}</p>
-                <p className="tools">{panel.tools}</p>
-              </article>
-            ))}
-          </motion.div>
-
-          <div className="reel-rail" aria-hidden="true">
-            <span className="reel-count">
-              {index} / {work.length}
-            </span>
-            <span className="reel-bar">
-              <motion.i style={panning ? { scaleX: scrollYProgress } : { scaleX: 0 }} />
-            </span>
+      {work.map((panel, index) => (
+        <article
+          className={`case-study case-${panel.viz}`}
+          key={panel.id}
+          id={panel.id}
+        >
+          <div className="case-visual">
+            <div className="visual-topline mono">
+              <span>Case / 0{index + 1}</span>
+              <span>System study</span>
+            </div>
+            <Flashlight radius={170} darkness={0.82}>
+              <Viz kind={panel.viz} />
+              <div className="diagram-annotation">{captions[panel.viz]}</div>
+            </Flashlight>
+            <div className="visual-bottomline mono">
+              <span>
+                {panel.viz === "ticker"
+                  ? "Illustrative price data"
+                  : "Architecture illustration"}
+              </span>
+              <span aria-hidden="true">↗</span>
+            </div>
           </div>
-        </div>
-      </div>
+          <div className="case-copy">
+            <p className="case-meta mono">{panel.meta}</p>
+            <h3>{panel.title}</h3>
+            <p className="case-body">{panel.body}</p>
+            <p className="case-tools">
+              <span className="mono">Built with</span>
+              {panel.tools}
+            </p>
+            <details>
+              <summary>
+                Engineering notes <span aria-hidden="true">+</span>
+              </summary>
+              <p>{panel.notes}</p>
+            </details>
+          </div>
+        </article>
+      ))}
     </section>
   );
 }

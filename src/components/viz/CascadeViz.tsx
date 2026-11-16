@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "motion/react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { rampAt } from "@/lib/spectrogram";
 
 /** Gate positions across the frame, and how much of the traffic each one
@@ -18,11 +18,18 @@ const STAGES = [
   { at: "90%", label: "reasoning agent" },
 ];
 
-type Call = { x: number; y: number; gate: number; speed: number; drop: number; rgb: [number, number, number] };
+type Call = {
+  x: number;
+  y: number;
+  gate: number;
+  speed: number;
+  drop: number;
+  rgb: [number, number, number];
+};
 
 export function CascadeViz() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -35,7 +42,7 @@ export function CascadeViz() {
     let raf = 0;
     let last = 0;
     let spawnAcc = 0;
-    let visible = true;
+    let visible = false;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -71,7 +78,7 @@ export function CascadeViz() {
       ctx.clearRect(0, 0, w, h);
 
       ctx.save();
-      ctx.strokeStyle = "#2C2138";
+      ctx.strokeStyle = "#45443D";
       ctx.lineWidth = dpr;
       ctx.setLineDash([3 * dpr, 5 * dpr]);
       for (const gate of GATES) {
@@ -118,7 +125,7 @@ export function CascadeViz() {
         }
         draw(dt);
       }
-      raf = requestAnimationFrame(tick);
+      raf = visible ? requestAnimationFrame(tick) : 0;
     };
 
     resize();
@@ -131,7 +138,14 @@ export function CascadeViz() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        visible = entries[0].isIntersecting;
+        visible = entries[0].isIntersecting && !document.hidden;
+        if (visible && !raf) {
+          last = 0;
+          raf = requestAnimationFrame(tick);
+        } else if (!visible) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
       },
       { rootMargin: "100px" },
     );
@@ -143,7 +157,6 @@ export function CascadeViz() {
 
     if (!reduced) {
       observer.observe(canvas);
-      raf = requestAnimationFrame(tick);
     }
 
     return () => {
@@ -155,7 +168,11 @@ export function CascadeViz() {
 
   return (
     <div className="viz">
-      <canvas ref={canvasRef} role="img" aria-label="Calls entering the engine and dropping out at each stage: deterministic signals, embedding recall, a structured LLM call, then a reasoning agent." />
+      <canvas
+        ref={canvasRef}
+        role="img"
+        aria-label="Calls entering the engine and dropping out at each stage: deterministic signals, embedding recall, a structured LLM call, then a reasoning agent."
+      />
       <div className="viz-labels" aria-hidden="true">
         {STAGES.map((stage) => (
           <span key={stage.label} style={{ left: stage.at }}>

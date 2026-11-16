@@ -9,12 +9,8 @@
 
 /** Violet → magenta → amber → pale, the same ramp the rest of the site uses. */
 const RAMP: [number, number, number][] = [
-  [12, 7, 22],
-  [58, 26, 96],
-  [123, 48, 150],
-  [255, 61, 119],
-  [255, 138, 61],
-  [255, 217, 160],
+  [17, 17, 15], [80, 85, 83], [129, 158, 187],
+  [237, 81, 63], [243, 215, 53], [234, 232, 226],
 ];
 
 export function rampAt(t: number): [number, number, number] {

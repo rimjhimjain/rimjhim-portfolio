@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Newsreader } from "next/font/google";
-import { SmoothScroll } from "@/components/SmoothScroll";
 import { profile, links } from "@/content/profile";
 import "./globals.css";
 
@@ -34,16 +33,18 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0710",
+  themeColor: "#11110f",
   colorScheme: "dark",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className={`${archivo.variable} ${newsreader.variable}`}>
-      <body>
-        <SmoothScroll>{children}</SmoothScroll>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

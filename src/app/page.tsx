@@ -1,23 +1,28 @@
-import { SignalThread } from "@/components/SignalThread";
 import { Hero } from "@/components/Hero";
-import { ClaimLine } from "@/components/ClaimLine";
+import { Navigation } from "@/components/Navigation";
 import { WorkReel } from "@/components/WorkReel";
 import { Toolkit } from "@/components/Toolkit";
 import { Proof } from "@/components/Proof";
 import { Signoff } from "@/components/Signoff";
+import { LightProvider } from "@/components/Flashlight";
+import { EditorialMotion } from "@/components/EditorialMotion";
 
 export default function Home() {
   return (
-    <>
-      <SignalThread />
-      <main>
+    <LightProvider>
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
+      <Navigation />
+      <main id="main">
         <Hero />
-        <ClaimLine />
-        <WorkReel />
-        <Toolkit />
-        <Proof />
+        <EditorialMotion>
+          <WorkReel />
+          <Toolkit />
+          <Proof />
+        </EditorialMotion>
       </main>
       <Signoff />
-    </>
+    </LightProvider>
   );
 }

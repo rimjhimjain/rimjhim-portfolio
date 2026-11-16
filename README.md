@@ -1,81 +1,42 @@
-# Portfolio — Rimjhim Jain
+# Rimjhim Jain's portfolio
 
-A single-page portfolio built around one idea: a lit **signal thread** runs the
-full length of the page, drawn by scroll, and every section hangs off it.
+A cinematic editorial portfolio with five chapters: the subject, engineering case studies, toolkit, experience and achievements, and collaboration.
 
-Live sections, in order: hero, the thesis line, a pinned work reel that pans
-sideways through five projects, the toolkit, the record before the job, and the
-signoff.
-
-## Stack
-
-- **Next.js 16** (App Router, Turbopack) + React 19 + TypeScript
-- **Tailwind CSS v4** for tokens; the bespoke visual treatments live in
-  `src/app/globals.css`
-- **Motion** for scroll-linked transforms and counters
-- **Lenis** for eased scrolling
-- **Archivo** (variable, 62–125% width axis) and **Newsreader**, self-hosted via
-  `next/font`
-
-## Commands
+## Run
 
 ```bash
-npm run dev     # dev server
-npm run build   # production build
-npm start       # serve the build
-npm run lint    # eslint
-npx tsc --noEmit  # type check
+npm install
+npm run dev
+npm run lint
+npx tsc --noEmit
+npm run build
+npm start
 ```
 
-There is no test suite. The verification bar is `npm run lint`, `npx tsc
---noEmit` and `npm run build`, plus a look at the running page.
+The app uses Next.js 16, React 19, TypeScript and Tailwind 4. Archivo and Newsreader are served by `next/font`; a fresh build needs access to Google Fonts.
 
-## Editing content
+## Content and assets
 
-**All copy and data lives in `src/content/profile.ts`.** The components are
-layout only — to change a project, a skill cluster or a figure, edit that file
-and nothing else.
+- `src/content/profile.ts`: identity, contact destinations, project summaries and full engineering notes, skill groups, education and achievements. The current resume supplies the hero summary and skills. The education, certification, language, and LeetCode details remain from the existing portfolio, as requested.
+- `public/Rimjhim_Jain_Resume.pdf`: the supplied resume, available from the record section and contact overlay.
+- `public/images/rimjhim-portrait.webp`: the supplied seated, forward-facing portrait.
+- `public/images/rimjhim-about.webp`: the supplied seated portrait used in the record section.
+- `src/components/Hero.tsx`, `Proof.tsx` and `Signoff.tsx`: section introductions and presentation copy.
 
-### Adding the portrait
+No required contact configuration remains. Email, telephone, LinkedIn and GitHub come from the resume. Individual project live/repository URLs were not supplied, so the case studies do not expose speculative links. Add only verified destinations if those projects become public. Illustrations describe architecture; the stock chart is illustrative data, not live market data.
 
-1. Drop the image at `public/portrait.jpg`.
-2. Set `portraitSrc = "/portrait.jpg"` in `src/content/profile.ts`.
+## Motion and interactions
 
-Until then the portrait frame renders a generative spectrogram fill so the
-hero composition still holds.
+GSAP with `@gsap/react` and ScrollTrigger handles the opening sequence, portrait parallax, case-study masks, chapter entrances, and the SVG hand/string sequence. Scoped contexts and media queries revert animations on unmount and when reduced motion changes.
 
-## Design system
+The existing `motion/react` package, the current Framer Motion distribution, handles navigation feedback, button hover/tap and tilt, and the contact panel. GSAP owns entrance wrappers; Motion owns their interactive children. Native page scrolling keeps anchor navigation and modal scroll locking predictable.
 
-The palette is a voice spectrogram, which is the subject matter: a deep
-aubergine ground with a violet → magenta → amber → pale ramp as the single
-accent. Tokens are defined once in the `@theme` block of
-`src/app/globals.css`.
+`Flashlight` is a reusable content-mask component. The header switch turns it on. `radius` and `darkness` props control the feathered beam. Pointer movement and touch taps update CSS coordinates through one pending animation frame, with no per-event React state updates. The effect defaults to full visibility, keeps essential copy outside the mask, and disables on reduced motion or devices reporting two or fewer logical processors. All lights can be restored with the keyboard-accessible switch.
 
-The page commits to one dark world, so there is no light theme to mirror.
+The contact overlay uses a native modal dialog with explicit focus cycling, Escape and visible close controls, background scroll locking and trigger focus restoration. The project CTA opens an email draft; there is no form backend.
 
-## Animation
+## Design
 
-Every effect is scroll-driven or ambient; nothing hides content behind an
-observer, so the page reads fully at rest. Canvas work pauses when offscreen.
+Tokens and responsive rules are in `src/app/globals.css`. Near-black and ivory form the base; yellow, red, and blue mark annotations and diagram stages. Archivo display, Newsreader prose, and system mono annotations. The portrait-led opening and five navigable chapters frame seven case studies, including SMS automation and runtime Stripe configuration. The open diagram compositions use restrained perspective on hover, and a dependency-free WebGL sculpture closes the page. Motion respects reduced-motion preferences. The portrait remains the actual supplied photograph, without generated identity changes.
 
-`prefers-reduced-motion` is respected throughout: Lenis is skipped, the work
-reel stacks vertically, canvas fields hold a still frame, SMIL animations are
-not mounted, and counters render their final values.
-
-## Layout notes
-
-Two things that are easy to break again:
-
-- The work reel decides horizontal vs stacked from the **viewport width alone**.
-  It cannot key off the measured track width, because the track is only wide
-  enough to pan once the horizontal layout is already applied.
-- `body` uses `overflow-x: clip`, not `hidden`. `hidden` makes the body a scroll
-  container and silently breaks the reel's sticky positioning.
-
-## Deploying
-
-Vercel, no configuration needed:
-
-```bash
-npx vercel
-```
+See `docs/implementation-plan.md` for the original audit and plan, and `docs/validation.md` for validation results.
